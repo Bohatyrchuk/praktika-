@@ -1,0 +1,230 @@
+Zavd4 adaptive · HTML
+Copy
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Завдання 4 — Адаптивна сторінка</title>
+  <style>
+    :root {
+      --color-main: #0000FF;
+      --color-text: #000000;
+      --color-bg: #7001;
+      --color-white: #FFFFFF;
+      --color-gray: #7024;
+      --radius: 8px;
+      --gap: 20px;
+    }
+ 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      padding: 16px;
+    }
+ 
+    /* ===== HEADER ===== */
+    .header {
+      background-color: var(--color-main);
+      color: var(--color-white);
+      padding: 20px;
+      border-radius: var(--radius);
+      text-align: center;
+      margin-bottom: var(--gap);
+    }
+ 
+    .header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+ 
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+ 
+    .header p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+ 
+    /* ===== БЛОКИ ===== */
+    .card {
+      background: var(--color-white);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: var(--gap);
+    }
+ 
+    .card h2 {
+      font-size: 16px;
+      color: var(--color-main);
+      margin-bottom: 10px;
+    }
+ 
+    .card p, .card li {
+      font-size: 14px;
+      color: var(--color-gray);
+      line-height: 1.6;
+    }
+ 
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+ 
+    .skills li {
+      background: var(--color-bg);
+      border: 1px solid var(--color-main);
+      color: var(--color-main);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+ 
+    /* форма */
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--color-gray);
+      margin-bottom: 4px;
+      margin-top: 10px;
+    }
+ 
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-size: 14px;
+    }
+ 
+    button {
+      margin-top: 12px;
+      background: var(--color-main);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+    }
+ 
+    button:hover {
+      opacity: 0.85;
+    }
+ 
+    /* ===== TABLET: 2 колонки ===== */
+    @media (min-width: 768px) {
+      body {
+        padding: 24px;
+      }
+ 
+      .header {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 20px;
+      }
+ 
+      .header img {
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+ 
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--gap);
+      }
+ 
+      button {
+        width: auto;
+      }
+    }
+ 
+    /* ===== DESKTOP: 3 колонки ===== */
+    @media (min-width: 1200px) {
+      body {
+        padding: 40px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+ 
+      .layout {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+ 
+      .header img {
+        width: 100px;
+        height: 100px;
+      }
+ 
+      .header h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+ 
+  <!-- HEADER -->
+  <div class="header">
+    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" alt="Фото">
+    <div>
+      <h1>Олексій Шевченко</h1>
+      <p>Frontend Developer · Львів</p>
+    </div>
+  </div>
+ 
+  <!-- ОСНОВНИЙ КОНТЕНТ -->
+  <div class="layout">
+ 
+    <div class="card">
+      <h2>Про мене</h2>
+      <p>Розробник з 4 роками досвіду. Люблю чистий код і гарний UI. Постійно вчуся нового.</p>
+    </div>
+ 
+    <div class="card">
+      <h2>Навички</h2>
+      <ul class="skills">
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>JavaScript</li>
+        <li>React</li>
+        <li>Git</li>
+        <li>Figma</li>
+      </ul>
+    </div>
+ 
+    <div class="card">
+      <h2>Написати мені</h2>
+      <label>Ім'я</label>
+      <input type="text" placeholder="Ваше ім'я">
+      <label>Email</label>
+      <input type="email" placeholder="email@example.com">
+      <label>Повідомлення</label>
+      <textarea rows="4" placeholder="Ваше повідомлення..."></textarea>
+      <button>Надіслати</button>
+    </div>
+ 
+  </div>
+ 
+</body>
+</html>
+ 
