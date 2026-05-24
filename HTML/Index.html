@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кошик покупок</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --bg: #f5f0e8;
+      --surface: #fffdf7;
+      --ink: #1a1410;
+      --muted: #8a7f72;
+      --accent: #d4522a;
+      --accent2: #4a7c59;
+      --bought: #b5a99a;
+      --border: #e0d8cc;
+      --shadow: 0 2px 12px rgba(26,20,16,.08);
+      --radius: 10px;
+    }
+ 
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+ 
+    /* ─── HEADER ─── */
+    header {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    header h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    header .logo {
+      font-size: 1.5rem;
+    }
+ 
+    /* ─── LAYOUT ─── */
+    .app {
+      display: flex;
+      flex: 1;
+      gap: 0;
+    }
+ 
+    /* ─── LEFT ─── */
+    .left {
+      flex: 1;
+      padding: 28px 28px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+    }
+ 
+    /* ADD INPUT */
+    .add-row {
+      display: flex;
+      gap: 10px;
+    }
+    .add-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .97rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color .18s;
+    }
+    .add-row input:focus { border-color: var(--accent); }
+    .add-row input::placeholder { color: var(--bought); }
+    .btn-add {
+      padding: 12px 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Unbounded', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .18s, transform .1s;
+    }
+    .btn-add:hover { background: #b8421e; }
+    .btn-add:active { transform: scale(.97); }
+ 
+    /* LIST */
+    .list-label {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+ 
+    #item-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+ 
+    /* ITEM */
+    .item {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      transition: opacity .2s, border-color .2s;
+      animation: slideIn .22s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .item.bought {
+      opacity: .72;
+      border-color: transparent;
+      background: #eee9e0;
+    }
+ 
+    /* name area */
+    .item-name {
+      flex: 1;
+      font-size: .97rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background .15s;
+      word-break: break-word;
+    }
+    .item-name:hover { background: #f0ebe0; }
+    .item.bought .item-name {
+      text-decoration: line-through;
+      color: var(--bought);
+      cursor: default;
+    }
+    .item.bought .item-name:hover { background: transparent; }
+ 
+    .item-name-input {
+      flex: 1;
+      padding: 4px 8px;
+      border: 1.5px solid var(--accent);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .97rem;
+      color: var(--ink);
+      outline: none;
+      background: #fff;
+    }
+ 
+    /* qty */
+    .qty-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qty-btn {
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+      font-weight: 600;
+    }
+    .qty-btn:hover:not(:disabled) { background: var(--border); border-color: var(--muted); }
+    .qty-btn:disabled { color: var(--border); cursor: default; }
+    .qty-val {
+      min-width: 22px;
+      text-align: center;
+      font-weight: 600;
+      font-size: .95rem;
+    }
+ 
+    /* action btns */
+    .btn-buy {
+      padding: 6px 12px;
+      border: 1.5px solid var(--accent2);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--accent2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, color .15s;
+    }
+    .btn-buy:hover { background: var(--accent2); color: #fff; }
+    .item.bought .btn-buy {
+      border-color: var(--muted);
+      color: var(--muted);
+    }
+    .item.bought .btn-buy:hover { background: var(--muted); color: #fff; }
+ 
+    .btn-del {
+      width: 30px; height: 30px;
+      border: 1.5px solid #e8d0c8;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--accent);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .btn-del:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+ 
+    /* empty */
+    .empty-msg {
+      color: var(--muted);
+      font-size: .9rem;
+      text-align: center;
+      padding: 30px 0;
+      font-style: italic;
+    }
+ 
+    /* ─── RIGHT (STATS) ─── */
+    .right {
+      width: 270px;
+      flex-shrink: 0;
+      border-left: 1.5px solid var(--border);
+      background: var(--surface);
+      padding: 28px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .stats-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+    .stats-section h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .stats-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: .88rem;
+    }
+    .stats-list li .sname {
+      color: var(--ink);
+      font-weight: 400;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 8px;
+    }
+    .stats-list li .sqty {
+      font-weight: 700;
+      font-family: 'Unbounded', sans-serif;
+      font-size: .72rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .stats-list.bought-list li .sqty { color: var(--accent2); }
+    .stats-empty {
+      color: var(--bought);
+      font-size: .82rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+ 
+<header>
+  <span class="logo">🛒</span>
+  <h1>Список покупок</h1>
+</header>
+ 
+<div class="app">
+  <!-- LEFT -->
+  <section class="left">
+    <div class="add-row">
+      <input id="new-item-input" type="text" placeholder="Назва товару..." autocomplete="off" />
+      <button class="btn-add" onclick="addItem()">Додати</button>
+    </div>
+ 
+    <span class="list-label">Товари</span>
+ 
+    <ul id="item-list"></ul>
+  </section>
+ 
+  <!-- RIGHT -->
+  <aside class="right">
+    <span class="stats-title">Статистика</span>
+ 
+    <div class="stats-section">
+      <h3>Треба купити</h3>
+      <ul class="stats-list" id="stats-need"></ul>
+    </div>
+ 
+    <div class="stats-section">
+      <h3>Вже куплено</h3>
+      <ul class="stats-list bought-list" id="stats-bought"></ul>
+    </div>
+  </aside>
+</div>
+ 
+<script>
+  /* ── STATE ── */
+  const DEFAULT_ITEMS = [
+    { id: uid(), name: 'Молоко', qty: 2, bought: false },
+    { id: uid(), name: 'Хліб',  qty: 1, bought: false },
+    { id: uid(), name: 'Яйця',  qty: 10, bought: false },
+  ];
+ 
+  let items = loadState() || DEFAULT_ITEMS;
+ 
+  /* ── UTILS ── */
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+  function saveState() {
+    try { localStorage.setItem('shoppingList', JSON.stringify(items)); } catch(e) {}
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('shoppingList');
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+ 
+  /* ── ADD ── */
+  const input = document.getElementById('new-item-input');
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+ 
+  function addItem() {
+    const name = input.value.trim();
+    if (!name) return;
+    items.push({ id: uid(), name, qty: 1, bought: false });
+    input.value = '';
+    input.focus();
+    saveState();
+    render();
+  }
+ 
+  /* ── DELETE ── */
+  function deleteItem(id) {
+    items = items.filter(i => i.id !== id);
+    saveState();
+    render();
+  }
+ 
+  /* ── TOGGLE BUY ── */
+  function toggleBought(id) {
+    const item = items.find(i => i.id === id);
+    if (item) { item.bought = !item.bought; saveState(); render(); }
+  }
+ 
+  /* ── QTY ── */
+  function changeQty(id, delta) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    saveState();
+    render();
+  }
+ 
+  /* ── RENAME ── */
+  function startEdit(id) {
+    const item = items.find(i => i.id === id);
+    if (!item || item.bought) return;
+ 
+    const nameEl  = document.getElementById('name-' + id);
+    const inputEl = document.getElementById('edit-' + id);
+    nameEl.style.display  = 'none';
+    inputEl.style.display = 'block';
+    inputEl.value = item.name;
+    inputEl.focus();
+    // place cursor at end
+    inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+  }
+ 
+  function finishEdit(id) {
+    const item    = items.find(i => i.id === id);
+    const inputEl = document.getElementById('edit-' + id);
+    const nameEl  = document.getElementById('name-' + id);
+    if (!item || !inputEl) return;
+ 
+    const newName = inputEl.value.trim();
+    if (newName) item.name = newName;
+ 
+    nameEl.textContent = item.name;
+    inputEl.style.display = 'none';
+    nameEl.style.display  = '';
+    saveState();
+    renderStats();
+  }
+ 
+  /* ── RENDER ── */
+  function render() {
+    const list = document.getElementById('item-list');
+    list.innerHTML = '';
+ 
+    if (!items.length) {
+      list.innerHTML = '<li class="empty-msg">Список порожній. Додайте товар!</li>';
+      renderStats();
+      return;
+    }
+ 
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'item' + (item.bought ? ' bought' : '');
+ 
+      /* name span */
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'item-name';
+      nameSpan.id = 'name-' + item.id;
+      nameSpan.textContent = item.name;
+      if (!item.bought) nameSpan.onclick = () => startEdit(item.id);
+ 
+      /* edit input */
+      const editInput = document.createElement('input');
+      editInput.className = 'item-name-input';
+      editInput.id = 'edit-' + item.id;
+      editInput.style.display = 'none';
+      editInput.type = 'text';
+      editInput.addEventListener('blur',    () => finishEdit(item.id));
+      editInput.addEventListener('keydown', e => { if (e.key === 'Enter') editInput.blur(); });
+ 
+      li.appendChild(nameSpan);
+      li.appendChild(editInput);
+ 
+      if (!item.bought) {
+        /* qty */
+        const qtyWrap = document.createElement('div');
+        qtyWrap.className = 'qty-wrap';
+ 
+        const btnMinus = document.createElement('button');
+        btnMinus.className = 'qty-btn';
+        btnMinus.textContent = '−';
+        btnMinus.disabled = item.qty <= 1;
+        btnMinus.onclick = () => changeQty(item.id, -1);
+ 
+        const qtyVal = document.createElement('span');
+        qtyVal.className = 'qty-val';
+        qtyVal.textContent = item.qty;
+ 
+        const btnPlus = document.createElement('button');
+        btnPlus.className = 'qty-btn';
+        btnPlus.textContent = '+';
+        btnPlus.onclick = () => changeQty(item.id, 1);
+ 
+        qtyWrap.append(btnMinus, qtyVal, btnPlus);
+        li.appendChild(qtyWrap);
+      }
+ 
+      /* buy toggle */
+      const btnBuy = document.createElement('button');
+      btnBuy.className = 'btn-buy';
+      btnBuy.textContent = item.bought ? 'Не куплено' : 'Куплено';
+      btnBuy.onclick = () => toggleBought(item.id);
+      li.appendChild(btnBuy);
+ 
+      /* delete (only if not bought) */
+      if (!item.bought) {
+        const btnDel = document.createElement('button');
+        btnDel.className = 'btn-del';
+        btnDel.title = 'Видалити';
+        btnDel.innerHTML = '×';
+        btnDel.onclick = () => deleteItem(item.id);
+        li.appendChild(btnDel);
+      }
+ 
+      list.appendChild(li);
+    });
+ 
+    renderStats();
+  }
+ 
+  function renderStats() {
+    const needEl   = document.getElementById('stats-need');
+    const boughtEl = document.getElementById('stats-bought');
+ 
+    const need   = items.filter(i => !i.bought);
+    const bought = items.filter(i =>  i.bought);
+ 
+    needEl.innerHTML   = need.length   ? need.map(statRow).join('')   : '<li class="stats-empty">Все куплено!</li>';
+    boughtEl.innerHTML = bought.length ? bought.map(statRow).join('') : '<li class="stats-empty">Нічого ще…</li>';
+  }
+ 
+  function statRow(item) {
+    return `<li>
+      <span class="sname" title="${esc(item.name)}">${esc(item.name)}</span>
+      <span class="sqty">×${item.qty}</span>
+    </li>`;
+  }
+ 
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+ 
+  /* ── INIT ── */
+  render();
+  input.focus();
+</script>
+</body>
+</html>
+ 
